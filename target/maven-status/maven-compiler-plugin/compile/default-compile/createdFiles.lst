@@ -1,1 +1,2 @@
 com\mycompany\logservice\LogService.class
+com\mycompany\logservice\ConnectionMongoDB.class

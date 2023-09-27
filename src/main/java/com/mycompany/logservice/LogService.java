@@ -4,6 +4,7 @@
 
 package com.mycompany.logservice;
 
+import java.util.List;
 import static spark.Spark.*;
 
 /**
@@ -14,6 +15,9 @@ public class LogService {
 
     public static void main(String[] args) {
         System.out.println("Log Service Server");
+        ConnectionMongoDB mongoConnection = new ConnectionMongoDB();
+        mongoConnection.createConnection();
+        mongoConnection.closeConnection();
         port(getPort());
         get("/logservice", (req, pesp) -> {
             String val = req.queryParams("value");
@@ -29,8 +33,11 @@ public class LogService {
         return 4568;
     }
 
-    private static String LogMessage(String value) {
-        
-        return "mensages";
+    private static List<String> LogMessage(String value) {
+        ConnectionMongoDB mongoConnection = new ConnectionMongoDB();
+        mongoConnection.createConnection();
+        List<String> colecctions = mongoConnection.getDocumentsColecction();
+        mongoConnection.closeConnection();
+        return colecctions;
     }
 }
