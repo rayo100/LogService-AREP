@@ -6,48 +6,52 @@ package com.mycompany.logservice;
 
 import com.mongodb.MongoException;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Sorts;
 import org.bson.Document;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ConnectionMongoDB {
-    //
-    private String url = "200.118.63.83:27017";
-    private MongoClient mongoClient = null;
-    private MongoDatabase mongoDatabase = null;
-    private MongoCollection<Document> mongoCollection;
-
+    //mongodb://localhost:27017
+    private String url = "mongodb://localhost:27017";
+    private static MongoClient mongoClient = null;
+    private static MongoDatabase mongoDatabase = null;
+    private static MongoCollection<Document> mongoCollection;
+    
     public void createConnection() {
         try {
-            mongoClient = new MongoClient(url);
-            mongoDatabase = mongoClient.getDatabase("arep");
-            mongoCollection = mongoDatabase.getCollection("messages");
+            mongoClient = (MongoClient) MongoClients.create(url);
+            mongoDatabase = mongoClient.getDatabase("LogArep");
+            mongoCollection = mongoDatabase.getCollection("Messages");
         } catch (MongoException ex) {
             System.out.println(ex);
         }
     }
 
-    public List<String> getDocumentsColecction() {
-        ArrayList<String> data = new ArrayList<>();
-        for (Document d: mongoCollection.find()) {
-            System.out.println(d.toJson());
-            data.add(d.toJson());
-        }
-        return data.subList(Math.max(data.size() - 10, 0), data.size());
+    public void addDocumentToDB(String value){
+        String currentDate =LocalDateTime.now().format(DateTimeFormatter.ofPattern("DD/MM/YYYY 'at' HH:mm:ss a"));
+        Document document = new Document("string", value).append("date", currentDate);
+        mongoCollection.insertOne(document);
     }
-
-    public void addDocument(String text) {
-        Document myDocument = new Document();
-        myDocument.put("text", text);
-        mongoCollection.insertOne(myDocument);
+    
+    public List<Document> getListDocuments(){
+        List<Document> documents = new ArrayList<>();
+        try (MongoCursor<Document> cursor = mongoCollection.find().limit(10).sort(Sorts.descending("date")).iterator()) {
+            while (cursor.hasNext()) {
+                documents.add(cursor.next());
+            }
+        }
+        return documents;
     }
 
     public void closeConnection() {
-        this.mongoClient.close();
+        mongoClient.close();
     }
 }

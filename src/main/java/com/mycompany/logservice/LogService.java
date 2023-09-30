@@ -4,7 +4,10 @@
 
 package com.mycompany.logservice;
 
+import com.google.gson.Gson;
 import java.util.List;
+import org.bson.Document;
+
 import static spark.Spark.*;
 
 /**
@@ -15,13 +18,11 @@ public class LogService {
 
     public static void main(String[] args) {
         System.out.println("Log Service Server");
-        ConnectionMongoDB mongoConnection = new ConnectionMongoDB();
-        mongoConnection.createConnection();
-        mongoConnection.closeConnection();
         port(getPort());
         get("/logservice", (req, pesp) -> {
             String val = req.queryParams("value");
-            return LogMessage(val);
+            Gson gson = new Gson();
+            return gson.toJson(LogMessage(val));
         });
     }
     
@@ -33,11 +34,12 @@ public class LogService {
         return 4568;
     }
 
-    private static List<String> LogMessage(String value) {
+    private static List<Document> LogMessage(String value) {
         ConnectionMongoDB mongoConnection = new ConnectionMongoDB();
         mongoConnection.createConnection();
-        List<String> colecctions = mongoConnection.getDocumentsColecction();
+        mongoConnection.addDocumentToDB(value);
+        List<Document> listDocuments = mongoConnection.getListDocuments();
         mongoConnection.closeConnection();
-        return colecctions;
+        return listDocuments;
     }
 }
