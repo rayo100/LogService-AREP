@@ -21,13 +21,13 @@ import java.util.List;
 public class ConnectionMongoDB {
     //mongodb://localhost:27017
     private String url = "mongodb://localhost:27017";
-    private static MongoClient mongoClient = null;
+    private static com.mongodb.client.MongoClient mongoClient = null;
     private static MongoDatabase mongoDatabase = null;
     private static MongoCollection<Document> mongoCollection;
     
     public void createConnection() {
         try {
-            mongoClient = (MongoClient) MongoClients.create(url);
+            mongoClient = MongoClients.create(url);
             mongoDatabase = mongoClient.getDatabase("LogArep");
             mongoCollection = mongoDatabase.getCollection("Messages");
         } catch (MongoException ex) {
@@ -36,8 +36,10 @@ public class ConnectionMongoDB {
     }
 
     public void addDocumentToDB(String value){
-        String currentDate =LocalDateTime.now().format(DateTimeFormatter.ofPattern("DD/MM/YYYY 'at' HH:mm:ss a"));
+        System.out.println("VALUE: " + value);
+        String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/YYYY 'at' HH:mm:ss"));
         Document document = new Document("string", value).append("date", currentDate);
+        System.out.println("DOCUMENTO:" + document.toString());
         mongoCollection.insertOne(document);
     }
     

@@ -20,7 +20,7 @@ public class LogService {
         System.out.println("Log Service Server");
         port(getPort());
         get("/logservice", (req, pesp) -> {
-            String val = req.queryParams("value");
+            String val = req.queryParams("message");
             Gson gson = new Gson();
             return gson.toJson(LogMessage(val));
         });
