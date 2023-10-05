@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ConnectionMongoDB {
     //mongodb://localhost:27017
-    private String url = "mongodb://localhost:27017";
+    private String url = "mongodb://db:27017";
     private static com.mongodb.client.MongoClient mongoClient = null;
     private static MongoDatabase mongoDatabase = null;
     private static MongoCollection<Document> mongoCollection;
