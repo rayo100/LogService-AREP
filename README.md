@@ -43,39 +43,42 @@ Para compilar las imágenes de Docker, recuerde que debe estar ubicado en el dir
 
 APP-LB-RoundRobin
 ```
-docker build --tag roundRobin . -f dockerfileroundrobin
+docker build --tag roundrobin . -f Dockerfile
 ```
 Log Service
 ```
-docker build --tag logService . -f dockerfilelogservice
+docker build --tag logservice . -f Dockerfile
 ```
 
 # EJECUCIÓN DEL PROYECTO
 
 Para ejecutar el proyecto, corra los siguientes comandos teniendo en cuenta los directorios:
 ```
-docker network create my_network
+docker network create create_network
 ```
 ```
-docker run -d -p 36001:4568 --name logService1 --network my_network logService
-```
-```  
-docker run -d -p 36002:4568 --name logService2 --network my_network logService
+docker run -d -p 36000:4567 --name roundrobin1 --network create_network roundrobin
 ```
 ```
-docker run -d -p 36003:4568 --name logService3 --network my_network logService
-```
-```
-docker run -d -p 36000:4567 --name roundRobin --network my_network roundRobin
+docker run -d -p 36001:4568 --name logservice1 --network create_network logservice
 ```
 ```  
-docker run -d -p 27017:27017 -v mongodb:/data/db -v mongodb_config:/data/configdb --name db --network my_network 
+docker run -d -p 36002:4568 --name logservice2 --network create_network logservice
+```
+```
+docker run -d -p 36003:4568 --name logservice3 --network create_network logservice
+```
+```  
+docker run -d -p 27017:27017 -v mongodb:/data/db -v mongodb_config:/data/configdb --name db --network create_network mongo:3.6.1 mongod
 ```
 Después, debería poder ingresar la página web en la siguiente url
 ```
-http://localhost:36000/app.html
+http://localhost:36000/index.html
 ```
-# VIDEO
+Se debería poder ver así:
+![image](https://github.com/rayo100/RoundRobin-AREP/assets/89558695/fffc9eff-97bb-4838-8f61-a202db3910ca)
+
+# VIDEO DESPLEGADO EN AWS
 
   
 
@@ -91,7 +94,5 @@ http://localhost:36000/app.html
 # AUTOR
 
   * Cesar Vásquez [GitHub](https://github.com/rayo100)
-
-
 
   
